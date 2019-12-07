@@ -2,3 +2,6 @@ Video 3 -
 ALTER TABLE CHANGE COLUMN ...
 SHOW CREATE TABLE sorgusu, ve PHP ile sonuç gösterimi.
 Video 4- 
+veri tabanı bağlantı bilgilerini oluşturduğumuz conf.php dosyasına taşıdık.
+Değişken olarak tanımlamış olduğumuz bağlantı parametrelerini sildik ve sabit (CONSTANT)
+olarak tanımladık.

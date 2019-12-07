@@ -1,8 +1,5 @@
 <?php
-$host='localhost';
-$user = 'root';
-$password = '';
-$db = 'trends';
+include('conf.php');
 ini_set('display_errors',true);
 include('class_trends.php');
 $trends = new trends();
