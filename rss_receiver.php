@@ -26,30 +26,60 @@ $channel_description = $channel->getElementsByTagName('description')
 $trends_items = array();
 $x=$channel->getElementsByTagName('item');
 //echo '<pre> count($x):'.count($x)."\r\n";
-echo '<pre> count($x):'.$x->length."\r\n";
+echo '<pre> $x->length:'.$x->length."\r\n";
+echo '<h2>'.$channel_title.'</h2><h3>'.$channel_description.'</h3>';
 for ($i=0; $i<$x->length; $i++) {
     
-  $item_title=$x->item($i)->getElementsByTagName('title')
+  $item_title= $x->item($i)->getElementsByTagName('title')
   ->item(0)->childNodes->item(0)->nodeValue;
-  $items[$i]['item_title'] = $item_title;
+  $trends_items[$i]['item_title'] = $item_title;
+  
+    $item_description = $x->item($i)->getElementsByTagName('description')
+  ->item(0)->childNodes->item(0)->nodeValue;
+  $trends_items[$i]['item_description'] = $item_description;
+  
+  $item_pubDate=$x->item($i)->getElementsByTagName('pubDate')
+  ->item(0)->childNodes->item(0)->nodeValue;
+  $trends_items[$i]['item_pubDate'] = $item_pubDate;
+  
+  /* tagin adındaki ":" yüzünden çalışmaz.
+    $item_traffic=$x->item($i)->getElementsByTagName('ht:approx_traffic')
+  ->item(0)->childNodes->item(0)->nodeValue;
+    echo '<b>'.$item_traffic.'</b>';
+    */
+  //$trends_items[$i]['item_title'] = $item_title;
   
   /*
   $item_title=$x->item($i)->getElementsByTagName('title')
   ->item(0)->childNodes->item(0)->nodeValue;
   $items[$i]['item_title'] = $item_title;
-  */
+  
   $item_link=$x->item($i)->getElementsByTagName('link')
   ->item(0)->childNodes->item(0)->nodeValue;
-  
+  */
     //$item_desc=$x->item($i)->hasAttribute('description');
 
   $item_ChildsLength=$x->item($i)->childNodes->length;
   $item_Childs = $x->item($i)->childNodes;
 
   foreach ($item_Childs as $cnode) {
+       if($cnode->nodeName!='#text') {
+           continue;
+       }
 
+      if($cnode->nodeName == 'ht:approx_traffic') {
+          $trends_items[$i]['item_traffic'] = $cnode->nodeValue;
+      }
+      if($cnode->nodeName == 'ht:picture') {
+          $trends_items[$i]['item_picture'] = $cnode->nodeValue;
+      }
+      if($cnode->nodeName == 'ht:picture_source') {
+          $trends_items[$i]['item_picture_source'] = $cnode->nodeValue;
+      }
+
+      if($cnode->nodeName!='#text') {
           echo '['.$cnode->nodeName.'] '.$cnode->nodeValue.'<br/><br/>';
-
+      }
   }
   echo '<br/><hr/><br/>';
 
