@@ -5,3 +5,4 @@ Video 4-
 veri tabanı bağlantı bilgilerini oluşturduğumuz conf.php dosyasına taşıdık.
 Değişken olarak tanımlamış olduğumuz bağlantı parametrelerini sildik ve sabit (CONSTANT)
 olarak tanımladık.
+Video 5-
