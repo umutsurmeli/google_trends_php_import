@@ -34,10 +34,15 @@ for ($i=0; $i<$x->length; $i++) {
   ->item(0)->childNodes->item(0)->nodeValue;
   $trends_items[$i]['item_title'] = $item_title;
   
+  if($x->item($i)->hasAttribute('description'))
+  {
     $item_description = $x->item($i)->getElementsByTagName('description')
   ->item(0)->childNodes->item(0)->nodeValue;
   $trends_items[$i]['item_description'] = $item_description;
-  
+  }
+  else {
+      $trends_items[$i]['item_description'] ='';
+  }
   $item_pubDate=$x->item($i)->getElementsByTagName('pubDate')
   ->item(0)->childNodes->item(0)->nodeValue;
   $trends_items[$i]['item_pubDate'] = $item_pubDate;
@@ -63,9 +68,7 @@ for ($i=0; $i<$x->length; $i++) {
   $item_Childs = $x->item($i)->childNodes;
 
   foreach ($item_Childs as $cnode) {
-       if($cnode->nodeName!='#text') {
-           continue;
-       }
+      
 
       if($cnode->nodeName == 'ht:approx_traffic') {
           $trends_items[$i]['item_traffic'] = $cnode->nodeValue;
@@ -76,7 +79,20 @@ for ($i=0; $i<$x->length; $i++) {
       if($cnode->nodeName == 'ht:picture_source') {
           $trends_items[$i]['item_picture_source'] = $cnode->nodeValue;
       }
-
+      /*
+      if($cnode->nodeName == 'ht:news_item') {
+          
+          echo ($cnode->hasChildNodes?'evet':'hayır');
+          //echo "\r\n".'<b>'.$cnode->nodeValue.'</b>';
+      }
+      */
+      if($cnode->nodeName == 'ht:news_item_url') {
+          echo $cnode->nodeValue;
+          
+      }
+      else {
+          echo 'ht:news_item_url nodeName`ler arasında yok!';
+      }
       if($cnode->nodeName!='#text') {
           echo '['.$cnode->nodeName.'] '.$cnode->nodeValue.'<br/><br/>';
       }
