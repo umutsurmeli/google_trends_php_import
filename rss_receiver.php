@@ -34,47 +34,74 @@ for ($i=0; $i<$x->length; $i++) {
     
   $item_title= $x->item($i)->getElementsByTagName('title')
   ->item(0)->childNodes->item(0)->nodeValue;
-  $trends_items[$i]['item_title'] = $item_title;
+  //$trends_items[$i]['item_title'] = $item_title;
   
   if($x->item($i)->hasAttribute('description'))
   {
     $item_description = $x->item($i)->getElementsByTagName('description')
   ->item(0)->childNodes->item(0)->nodeValue;
-  $trends_items[$i]['item_description'] = $item_description;
+  //$trends_items[$i]['item_description'] = $item_description;
   }
   else {
-      $trends_items[$i]['item_description'] ='';
+      //$trends_items[$i]['item_description'] ='';
   }
   $item_pubDate=$x->item($i)->getElementsByTagName('pubDate')
   ->item(0)->childNodes->item(0)->nodeValue;
-  $trends_items[$i]['item_pubDate'] = $item_pubDate;
+  //$trends_items[$i]['item_pubDate'] = $item_pubDate;
 
   $item_ChildsLength=$x->item($i)->childNodes->length;
   $item_Childs = $x->item($i)->childNodes;
   
   
   
+  $htnews_item_index=0;
   foreach ($item_Childs as $cnode) {
       
-      if($cnode->nodeName!='#text' && $cnode->nodeName != 'ht:news_item') {
-          echo '<br/>['.$cnode->nodeName.'] '.$cnode->nodeValue.'';
-      }
-      else if($cnode->nodeName == 'ht:news_item') {
+      if($cnode->nodeName!='#text') {
+          //echo '<br/>['.$cnode->nodeName.'] '.$cnode->nodeValue.'';
+          switch ($cnode->nodeName) {
+              //$trends_items[$i]['item_pubDate'] = $item_pubDate;
+            case 'title':
+            $trends_items[$i]['title'] = $cnode->nodeValue;
+            break;
+            case 'ht:approx_traffic':
+            $trends_items[$i]['ht:approx_traffic'] = $cnode->nodeValue;
+            break;
+            case 'description':
+            $trends_items[$i]['description'] = $cnode->nodeValue;
+            break;
+            case 'pubDate':
+            $trends_items[$i]['pubDate'] = $cnode->nodeValue;
+            break;
+            case 'ht:picture':
+            $trends_items[$i]['ht:picture'] = $cnode->nodeValue;
+            break;
+            case 'ht:picture_source':
+            $trends_items[$i]['ht:picture_source'] = $cnode->nodeValue;
+            break;
+            case 'ht:news_item':
+                    
+                    
+                    $ht_news_childs = $cnode->childNodes;
+                    foreach($ht_news_childs as $htchild) {
+                          if($htchild->nodeName!='#text') {
+                              $trends_items[$i]['ht:news_item'][$htnews_item_index][$htchild->nodeName] = $htchild->nodeValue;
+                          }
 
-          echo '&lt;'.$cnode->childNodes->item(1)->nodeName.'&gt;';
-          $ht_news_childs = $cnode->childNodes;
-          foreach($ht_news_childs as $htchild) {
-                if($htchild->nodeName!='#text') {
-                    echo '<br/>*['.$htchild->nodeName.']'.$htchild->nodeValue;
-                }
+                    }
+                    $htnews_item_index++;
+
+            break;
+             
+              default :
               
           }
-           
       }
 
   }
   
 
-  echo '<br/><hr/><br/>';
+  
 
 }
+echo var_dump($trends_items);
