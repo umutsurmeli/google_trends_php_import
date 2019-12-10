@@ -12,28 +12,117 @@ class trends {
 		}
 		
 	}
+        function get_channel_title_id($channel_title) {
+		if($this->connection === false) {
+			exit('bağlantı yok');
+		}
+                $con = $this->connection;
+                $sql = ' SELECT id FROM settings';
+                $sql .= ' WHERE ';
+                $sql .= ' `key` ="channel_title"';
+                $sql .= ' AND `value`="'.$channel_title.'" LIMIT 1;';
+                
+                $result = $con->query($sql);
 
+                if(!$result) {
+                    return false;
+                }
+                
+                if($result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    $id= $row['id'];
+                    return $id;
+                }
+                return false;
+        }
+        function set_channel_title_id($channel_title) {
+		if($this->connection === false) {
+			exit('bağlantı yok');
+		}
+                $con = $this->connection;
+                $channel_title_id = $this->get_channel_title_id($channel_title);
+                if($channel_title_id===false) {
+                    $sql = 'INSERT INTO settings (`key`,`value`) VALUES(';
+                    $sql .= '"channel_title","'.$channel_title.'");';
+                    $result = $con->query($sql);
+                    if($result!==false) {
+                        $channel_title_id = $this->get_channel_title_id($channel_title);
+                        return $channel_title_id;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                return $channel_title_id;
+                
+                
+        }
+        function get_channel_description_id($channel_description) {
+		if($this->connection === false) {
+			exit('bağlantı yok');
+		}
+                $con = $this->connection;
+                $sql = ' SELECT id FROM settings';
+                $sql .= ' WHERE ';
+                $sql .= ' `key` ="channel_description"';
+                $sql .= ' AND `value`="'.$channel_description.'" LIMIT 1;';
+                
+                $result = $con->query($sql);
+
+                if(!$result) {
+                    return false;
+                }
+                
+                if($result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    $id= $row['id'];
+                    return $id;
+                }
+                return false;
+        }
+        function set_channel_description_id($channel_description) {
+		if($this->connection === false) {
+			exit('bağlantı yok');
+		}
+                $con = $this->connection;
+                $channel_description_id = $this->get_channel_description_id($channel_description);
+                if($channel_description_id===false) {
+                    $sql = 'INSERT INTO settings (`key`,`value`) VALUES(';
+                    $sql .= '"channel_description","'.$channel_description.'");';
+                    $result = $con->query($sql);
+                    if($result!==false) {
+                        $channel_description_id = $this->get_channel_description_id($channel_description);
+                        return $channel_description_id;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                return $channel_description_id;
+                
+                
+        }
         function create_datatable() {
 		if($this->connection === false) {
 			exit('bağlantı yok');
 		}
-		$sql = 'CREATE TABLE datatable (
-                        id INT(11) UNSIGNED NOT NULL,
-                        channel_title VARCHAR(255) NULL,
-                        channel_description VARCHAR(255) NULL,
-			item_title VARCHAR(255) NOT NULL,
-                        item_traffic VARCHAR(20) NOT NULL,
-                        item_description VARCHAR(255) NOT NULL,
-                        item_pubDate VARCHAR(50) NOT NULL,
-                        item_picture VARCHAR(255) NULL,
-                        item_picture_source VARCHAR(255) NULL,
-                        news_title VARCHAR(255) NOT NULL,
-                        news_snippet VARCHAR(255) NOT NULL,
-                        news_url VARCHAR(255) NOT NULL,
-                        news_source VARCHAR(50) NOT NULL,
-                        tarih TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-			PRIMARY KEY(id)
-                        ) CHARSET=utf8 COLLATE utf8_general_ci ENGINE=InnoDB;';
+		$sql = 'CREATE TABLE `datatable` (
+                        `id` int(11) unsigned NOT NULL,
+                        `channel_title_id` int(11) unsigned NOT NULL,
+                        `channel_description_id` int(11) unsigned NOT NULL,
+                        `item_title` varchar(255) NOT NULL,
+                        `item_traffic` varchar(20) NOT NULL,
+                        `item_description` varchar(255) NOT NULL,
+                        `item_pubDate` varchar(50) NOT NULL,
+                        `item_picture` varchar(255) DEFAULT NULL,
+                        `item_picture_source` varchar(255) DEFAULT NULL,
+                        `news_title` varchar(255) NOT NULL,
+                        `news_snippet` varchar(255) NOT NULL,
+                        `news_url` varchar(255) NOT NULL,
+                        `news_source` varchar(50) NOT NULL,
+                        `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        PRIMARY KEY (`id`)
+                      ) ENGINE=InnoDB DEFAULT CHARSET=utf8';
 			//exit($sql);
 		$con = $this->connection;
 		//echo var_dump($con);exit();

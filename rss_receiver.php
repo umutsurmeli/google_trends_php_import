@@ -1,5 +1,7 @@
 <?php
     ini_set('display_errors',true);
+    include('conf.php');
+    include('class_trends.php');
     $url = 'https://trends.google.com/trends/trendingsearches/daily/rss?geo=TR&rast='.rand(100,1000);
     //$url = 'https://news.google.com/rss?topic=h&hl=tr&gl=TR&ceid=TR:tr'; // haberler
     $doc = new DOMDocument();
@@ -104,4 +106,20 @@ for ($i=0; $i<$x->length; $i++) {
   
 
 }
-echo var_dump($trends_items);
+//echo var_dump($trends_items);
+$trends = new trends();
+$con = $trends->baglan(HOST, USER, PASSWORD, DATABASE);
+if($con===false) {
+    exit('V.T. Bağlantısu kurulamadı.');
+}
+$channel_title_id = $trends->set_channel_title_id($channel_title);
+$channel_description_id = $trends->set_channel_description_id($channel_description);
+
+if($channel_title_id === false) {
+    exit('set_channel_title_id bilinmeyen hata oluştu!');
+}
+exit('$channel_title_id:'.$channel_title_id);
+foreach ($trends_items as $key=>$value) {
+    
+    echo $key.' '.$value['title'].'<br/>';
+}
