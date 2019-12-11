@@ -8,4 +8,4 @@ include('class_trends.php');
 $trends = new trends();
 $con=$trends->baglan($host,$user,$password,$db);
 //var_dump($con);
-$trends->show_create_datatable();
+$trends->show_create('settings');

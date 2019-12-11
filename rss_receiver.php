@@ -28,8 +28,8 @@ $channel_description = $channel->getElementsByTagName('description')
 $trends_items = array();
 $x=$channel->getElementsByTagName('item');
 //echo '<pre> count($x):'.count($x)."\r\n";
-echo '<pre> $x->length:'.$x->length."\r\n";
-echo '<h2>'.$channel_title.'</h2><h3>'.$channel_description.'</h3>';
+echo '<pre> Okunan trend sayısı:'.$x->length."\r\n";
+
 
 
 for ($i=0; $i<$x->length; $i++) {
@@ -118,8 +118,43 @@ $channel_description_id = $trends->set_channel_description_id($channel_descripti
 if($channel_title_id === false) {
     exit('set_channel_title_id bilinmeyen hata oluştu!');
 }
-exit('$channel_title_id:'.$channel_title_id);
+echo '<h1>'.$channel_title.'</h1>';
+echo '<h3>'.$channel_description.'</h3>';
+$fontred='66';
 foreach ($trends_items as $key=>$value) {
+    if($fontred=='66') {$fontred='00';}
+    else {$fontred='66';}
+    echo '<font color="#'.$fontred.'0000">';
+
+    $ht_news_item = $value['ht:news_item'];
+    $ht_news_item_count = count($ht_news_item);
+    echo '<hr/><br/>'.$value['title'].' ('.count($ht_news_item).') Kaynak<br/>';
+    if($ht_news_item_count >1 ) {
+        for($hi=0;$hi<$ht_news_item_count;$hi++) {
+            $item = $value;
+            $item['line'] = $hi;
+            $item['ht:news_item'] = $value['ht:news_item'][$hi];
+            print_r($item);
+            $sonuc = $trends->add_item($channel_title_id, $channel_description_id, $item);
+            print('<br/><b>Yukarda Eklenen:'.intval($sonuc).'</b><br/>');
+            if($sonuc===false) {
+                $guncelleme = $trends->update_item_traffic($channel_title_id, $channel_description_id, $item);
+                print('<br/><b>Yukarda Trafiği güncellendi:'.$guncelleme.'</b><br/>');
+            }
+        }
+    }
+    else {
+        $item = $value;
+        $item['ht:news_item'] = $value['ht:news_item'][0];
+        $item['line'] = 0;
+        print_r($item);
+        $sonuc = $trends->add_item($channel_title_id, $channel_description_id, $item);
+        print('<br/><b><u>Yukarda Eklenen:'.intval($sonuc).'</u></b><br/>');
+            if($sonuc===false) {
+                $guncelleme = $trends->update_item_traffic($channel_title_id, $channel_description_id, $item);
+                print('<br/><b>Yukarda Trafiği güncellendi:'.$guncelleme.'</b><br/>');
+            }
     
-    echo $key.' '.$value['title'].'<br/>';
+    }
+    echo '</font>';
 }
