@@ -109,13 +109,13 @@ class trends {
                     $item_traffic = intval($item_traffic);
                     return $item_traffic;
         }
-        function add_item($channel_title_id,$channel_description_id,$item) {
+        function add_item($channel_title_id,$channel_description_id,$item,$hit_line,$source_line) {
 		if($this->connection === false) {
 			exit('bağlantı yok');
 		}
                 $con = $this->connection;
                 $sql = 'INSERT INTO '.DBPREFIX.'datatable (channel_title_id,channel_description_id,item_title,item_traffic,item_description';
-                $sql.= ',item_pubDate,item_picture,item_picture_source,line,news_title,news_snippet,news_url,news_source) VALUES(';
+                $sql.= ',item_pubDate,item_picture,item_picture_source,hit_line,source_line,news_title,news_snippet,news_url,news_source,log_date,up_date) VALUES(';
                 $sql.= '"'.$channel_title_id.'"';
                 $sql.= ',"'.$channel_description_id.'"';
                 $sql.= ',"'.(isset($item['title'])?$item['title']:'').'"';
@@ -131,11 +131,13 @@ class trends {
                 $sql.= ',"'.(isset($item['pubDate'])?$item['pubDate']:'').'"';
                 $sql.= ',"'.(isset($item['ht:picture'])?$item['ht:picture']:'').'"';
                 $sql.= ',"'.(isset($item['ht:picture_source'])?$item['ht:picture_source']:'').'"';
-                $sql.= ',"'.(isset($item['line'])?$item['line']:0).'"';
+                $sql.= ',"'.$hit_line.'"';
+                $sql.= ',"'.$source_line.'"';
                 $sql.= ',"'.(isset($item['ht:news_item']['ht:news_item_title'])?$item['ht:news_item']['ht:news_item_title']:'').'"';
                 $sql.= ',"'.(isset($item['ht:news_item']['ht:news_item_snippet'])?$item['ht:news_item']['ht:news_item_snippet']:'').'"';
                 $sql.= ',"'.(isset($item['ht:news_item']['ht:news_item_url'])?$item['ht:news_item']['ht:news_item_url']:'').'"';
                 $sql.= ',"'.(isset($item['ht:news_item']['ht:news_item_source'])?$item['ht:news_item']['ht:news_item_source']:'').'"';
+                $sql.= ',NOW(),NOW()';
                 $sql.=');';
                 $result = $con->query($sql);
                 if($con->error) {
@@ -148,7 +150,7 @@ class trends {
                 return true;
 
         }
-        function  update_item_traffic($channel_title_id, $channel_description_id,$item) {
+        function  update_item_traffic($channel_title_id, $channel_description_id,$item,$hit_line,$source_line) {
             if($this->connection === false) {
                     exit('bağlantı yok');
             }
@@ -163,6 +165,8 @@ class trends {
             
             $sql = 'UPDATE '.DBPREFIX.'datatable SET';
             $sql.= ' item_traffic="'.$item_traffic.'"';
+            $sql.= ' ,hit_line='.$hit_line;
+            $sql.= ' ,source_line='.$source_line;
             $sql.= ' ,up_date=NOW()';
             $sql.= ' WHERE channel_title_id='.$channel_title_id;
             $sql.= ' AND channel_description_id='.$channel_description_id;
@@ -181,6 +185,8 @@ class trends {
 		if($this->connection === false) {
 			exit('bağlantı yok');
 		}
+
+
 		$sql = 'CREATE TABLE `'.DBPREFIX.'datatable` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`channel_title_id` INT(11) UNSIGNED NOT NULL,
@@ -191,12 +197,13 @@ class trends {
 	`item_pubDate` VARCHAR(50) NOT NULL,
 	`item_picture` VARCHAR(255) NULL DEFAULT NULL,
 	`item_picture_source` VARCHAR(255) NULL DEFAULT NULL,
-	`line` TINYINT(2) UNSIGNED NOT NULL DEFAULT "0",
+        `hit_line` int(2) UNSIGNED NOT NULL DEFAULT "0",
+	`source_line` TINYINT(2) UNSIGNED NOT NULL DEFAULT "0",
 	`news_title` VARCHAR(255) NOT NULL,
 	`news_snippet` VARCHAR(255) NOT NULL,
 	`news_url` VARCHAR(255) NOT NULL,
 	`news_source` VARCHAR(50) NOT NULL,
-	`log_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`log_date` DATETIME NULL DEFAULT NULL,
 	`up_date` DATETIME NULL DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `channel_title_id` (`channel_title_id`, `channel_description_id`, `item_pubDate`, `news_url`),
@@ -205,17 +212,18 @@ class trends {
 	CONSTRAINT `cti` FOREIGN KEY (`channel_title_id`) REFERENCES `'.DBPREFIX.'settings` (`id`)
 )
 COLLATE="utf8_general_ci"
-ENGINE=InnoDB;
+ENGINE=InnoDB
+;
 
 ';
 			//exit($sql);
 		$con = $this->connection;
 		//echo var_dump($con);exit();
 		if(($res=$con->query($sql))===false) {
-			echo $con->error;
+			exit('veritabanı hatası');//echo $con->error;
 		}
 		else {
-			echo 'datatable oluşturuldu.';
+			echo '<br/>datatable oluşturuldu.';
 		}
         }
 
@@ -227,7 +235,7 @@ ENGINE=InnoDB;
 		$con = $this->connection;
 		//echo var_dump($con);exit();
 		if(($res=$con->query($sql))===false) {
-			echo $con->error;
+			exit('veritabanı hatası');//echo $con->error;
 		}
 		else {
 			$row = $res->fetch_assoc();
@@ -255,10 +263,10 @@ ENGINE=InnoDB;
 		$con = $this->connection;
 		//echo var_dump($con);exit();
 		if(($res=$con->query($sql))===false) {
-			echo $con->error;
+			exit('veritabanı hatası');//echo $con->error;
 		}
                 else {
-                    echo 'settings tablosu oluşturuldu';
+                    echo '<br/>settings tablosu oluşturuldu';
                 }
         }
         

@@ -1,7 +1,0 @@
---
-select * 
-from datatable
-where line=0
-order by item_traffic desc, id desc, up_date desc
-limit 20;
----

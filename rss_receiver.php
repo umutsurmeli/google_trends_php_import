@@ -2,7 +2,7 @@
     ini_set('display_errors',true);
     include('conf.php');
     include('class_trends.php');
-    $url = 'https://trends.google.com/trends/trendingsearches/daily/rss?geo=TR&rast='.rand(100,1000);
+    $url = 'https://trends.google.com/trends/trendingsearches/daily/rss?geo=TR';
     //$url = 'https://news.google.com/rss?topic=h&hl=tr&gl=TR&ceid=TR:tr'; // haberler
     $doc = new DOMDocument();
     $doc->load($url);
@@ -121,6 +121,7 @@ if($channel_title_id === false) {
 echo '<h1>'.$channel_title.'</h1>';
 echo '<h3>'.$channel_description.'</h3>';
 $fontred='66';
+$hit_line = 1;
 foreach ($trends_items as $key=>$value) {
     if($fontred=='66') {$fontred='00';}
     else {$fontred='66';}
@@ -135,10 +136,10 @@ foreach ($trends_items as $key=>$value) {
             $item['line'] = $hi;
             $item['ht:news_item'] = $value['ht:news_item'][$hi];
             print_r($item);
-            $sonuc = $trends->add_item($channel_title_id, $channel_description_id, $item);
+            $sonuc = $trends->add_item($channel_title_id, $channel_description_id, $item,$hit_line,$hi);
             print('<br/><b>Yukarda Eklenen:'.intval($sonuc).'</b><br/>');
             if($sonuc===false) {
-                $guncelleme = $trends->update_item_traffic($channel_title_id, $channel_description_id, $item);
+                $guncelleme = $trends->update_item_traffic($channel_title_id, $channel_description_id, $item,$hit_line,$hi);
                 print('<br/><b>Yukarda Trafiği güncellendi:'.$guncelleme.'</b><br/>');
             }
         }
@@ -148,13 +149,14 @@ foreach ($trends_items as $key=>$value) {
         $item['ht:news_item'] = $value['ht:news_item'][0];
         $item['line'] = 0;
         print_r($item);
-        $sonuc = $trends->add_item($channel_title_id, $channel_description_id, $item);
+        $sonuc = $trends->add_item($channel_title_id, $channel_description_id, $item,$hit_line,0);
         print('<br/><b><u>Yukarda Eklenen:'.intval($sonuc).'</u></b><br/>');
             if($sonuc===false) {
-                $guncelleme = $trends->update_item_traffic($channel_title_id, $channel_description_id, $item);
+                $guncelleme = $trends->update_item_traffic($channel_title_id, $channel_description_id, $item,$hit_line,0);
                 print('<br/><b>Yukarda Trafiği güncellendi:'.$guncelleme.'</b><br/>');
             }
     
     }
     echo '</font>';
+    $hit_line++;
 }
